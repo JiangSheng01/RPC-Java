@@ -1,6 +1,7 @@
 package com.jiangsheng.rpc.client.servicecenter;
 
 import com.jiangsheng.rpc.client.cache.ServiceCache;
+import com.jiangsheng.rpc.client.servicecenter.balance.impl.ConsistencyHashBalance;
 import com.jiangsheng.rpc.client.servicecenter.zkwatcher.WatchZK;
 import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
@@ -13,6 +14,7 @@ import java.util.List;
 public class ZKServiceCenter implements ServiceCenter{
     private CuratorFramework client;
     private static final String ROOT_PATH = "MyRPC";
+    private static final String RETRY_PATH = "CanRetry";
     private ServiceCache cache;
 
     public ZKServiceCenter() throws InterruptedException{
@@ -35,12 +37,30 @@ public class ZKServiceCenter implements ServiceCenter{
             if (serviceList == null) {
                 serviceList = client.getChildren().forPath("/" + serviceName);
             }
-            String string = serviceList.get(0);
-            return parseAddress(string);
+            String address = new ConsistencyHashBalance().balance(serviceList);
+            return parseAddress(address);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
+
+    @Override
+    public boolean checkRetry(String serviceName) {
+        boolean canRetry = false;
+        try {
+            List<String> serviceList = client.getChildren().forPath("/" + RETRY_PATH);
+            for (String s : serviceList) {
+                if (s.equals(serviceName)) {
+                    System.out.println("服务" + serviceName + "在白名单上，可进行重试");
+                    canRetry = true;
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return canRetry;
+    }
+
     private String getServiceAddress(InetSocketAddress serviceAddress)  {
         return serviceAddress.getHostString() + ":" + serviceAddress.getPort();
     }

@@ -12,7 +12,7 @@ public class TestClient {
         User user = proxy.getUserByUserId(1);
         System.out.println("从服务端得到的user=" + user.toString());
 
-        System.out.println("从服务端得到的user=" + proxy.getUserByUserId(2).toString());
+//        System.out.println("从服务端得到的user=" + proxy.getUserByUserId(2).toString());
 
         User u = User.builder().id(100).userName("js").sex(true).build();
         Integer id = proxy.insertUser(u);
