@@ -1,7 +1,9 @@
 package com.jiangsheng.rpc.server.provider;
 
+import com.jiangsheng.rpc.server.ratelimit.provider.RateLimitProvider;
 import com.jiangsheng.rpc.server.register.ServiceRegister;
 import com.jiangsheng.rpc.server.register.impl.ZKServiceRegister;
+import lombok.Getter;
 
 
 import java.net.InetSocketAddress;
@@ -13,11 +15,14 @@ public class ServiceProvider {
     private int port;
     private Map<String, Object> interfaceProvider;
     private ServiceRegister serviceRegister;
+    @Getter
+    private RateLimitProvider rateLimitProvider;
     public ServiceProvider(String host, int port) {
         this.host = host;
         this.port = port;
         this.interfaceProvider = new HashMap<>();
         this.serviceRegister = new ZKServiceRegister();
+        rateLimitProvider = new RateLimitProvider();
     }
 
     public void provideServiceInterface(Object service, boolean canRetry) {

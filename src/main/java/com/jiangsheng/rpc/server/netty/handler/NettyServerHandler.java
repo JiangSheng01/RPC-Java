@@ -3,6 +3,7 @@ package com.jiangsheng.rpc.server.netty.handler;
 import com.jiangsheng.rpc.common.message.RpcRequest;
 import com.jiangsheng.rpc.common.message.RpcResponse;
 import com.jiangsheng.rpc.server.provider.ServiceProvider;
+import com.jiangsheng.rpc.server.ratelimit.RateLimit;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -29,6 +30,13 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<RpcRequest> 
 
     private RpcResponse getResponse(RpcRequest rpcRequest) {
         String interfaceName = rpcRequest.getInterfaceName();
+
+        RateLimit rateLimit = serviceProvider.getRateLimitProvider().getRateLimit(interfaceName);
+        if (!rateLimit.getToken()) {
+            System.out.println("服务限流");
+            return RpcResponse.fail();
+        }
+
         Object service = serviceProvider.getService(interfaceName);
         Method method = null;
         try {
