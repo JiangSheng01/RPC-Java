@@ -32,3 +32,17 @@ version 4
 
 + 在服务端加入了令牌桶限流算法，对服务请求进行限流
 + 在客户端加入了熔断服务，防止被调用端的服务异常影响到调用端的服务，保证调用端的正常服务
+
+version 5
+
++ 对项目结构进行了重构，包含了以下5个子模块：
+  + jrpc-api
+  + jrpc-common
+  + jrpc-consumer
+  + jrpc-provider
+  + jrpc-core
++ 对负载均衡算法进行了改动，使其更合理
++ 对服务端关闭方法进行了优化
++ 使用springboot通过读配置文件的方式对环境进行配置
++ 添加Protostuff、Kryo、Hessian序列化方式并使用了SPI机制
++ 引入了log4j进行日志记录

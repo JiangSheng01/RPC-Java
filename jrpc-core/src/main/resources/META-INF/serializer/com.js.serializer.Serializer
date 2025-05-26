@@ -1,0 +1,5 @@
+Hessian=com.js.serializer.serializer.HessianSerializer
+protobuf=com.js.serializer.serializer.ProtobufSerializer
+json=com.js.serializer.serializer.JsonSerializer
+kryo=com.js.serializer.serializer.KryoSerializer
+jdk=com.js.serializer.serializer.ObjectSerializer
