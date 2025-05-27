@@ -16,4 +16,9 @@ public class RpcRequest implements Serializable {
     private String methodName;
     private Object[] params;
     private Class<?>[] parameterTypes;
+    private RequestType type = RequestType.NORMAL;
+
+    public static RpcRequest heartbeat() {
+        return RpcRequest.builder().type(RequestType.HEARTBEAT).build();
+    }
 }

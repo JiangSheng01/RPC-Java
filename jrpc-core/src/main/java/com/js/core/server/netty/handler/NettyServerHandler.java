@@ -1,6 +1,7 @@
 package com.js.core.server.netty.handler;
 
 
+import com.js.common.message.RequestType;
 import com.js.common.message.RpcRequest;
 import com.js.common.message.RpcResponse;
 import com.js.core.server.provider.ServiceProvider;
@@ -25,8 +26,14 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<RpcRequest> 
             log.error("接收到非法请求，request 为空");
             return;
         }
-        RpcResponse response = getResponse(request);
-        ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
+        if (request.getType() == RequestType.HEARTBEAT) {
+            log.info("接收到来自客户端的心跳包");
+            return;
+        }
+        if (request.getType() == RequestType.NORMAL) {
+            RpcResponse response = getResponse(request);
+            ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
+        }
     }
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {

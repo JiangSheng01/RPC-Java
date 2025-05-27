@@ -46,3 +46,4 @@ version 5
 + 使用springboot通过读配置文件的方式对环境进行配置
 + 添加Protostuff、Kryo、Hessian序列化方式并使用了SPI机制
 + 引入了log4j进行日志记录
++ 增加了更细粒度的基于方法的白名单重试机制（之前是基于接口的）
